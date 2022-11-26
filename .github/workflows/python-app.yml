@@ -29,9 +29,19 @@ jobs:
         python-version: "3.10"
     - name: Install Poetry Action
       uses: snok/install-poetry@v1.3.3
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
     - name: Install dependencies
       run: |
         poetry install --no-root
+    
+    - name: Cache build venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
+        key: ${{ runner.os }}-venv
 
   lint:
     runs-on: ubuntu-latest
@@ -42,6 +52,19 @@ jobs:
         working-directory: ./example-app
     needs: build
     steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1.3.3
+      - name: Load cache
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
+          key: ${{ runner.os }}-venv
       - name: Lint with flake8
         run: |
             poetry run task lint
@@ -55,6 +78,19 @@ jobs:
         working-directory: ./example-app
     needs: build
     steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1.3.3
+      - name: Load cache
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
+          key: ${{ runner.os }}-venv
       - name: formatter
         run: |
             poetry run task formatter
@@ -68,6 +104,19 @@ jobs:
         working-directory: ./example-app
     needs: build
     steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1.3.3
+      - name: Load cache
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
+          key: ${{ runner.os }}-venv
       - name: security
         run: |
             poetry run task security
@@ -79,6 +128,19 @@ jobs:
         working-directory: ./example-app
     needs: ['lint', 'formatter', 'security']
     steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install Poetry Action
+        uses: snok/install-poetry@v1.3.3
+      - name: Load cache
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/work/iac-labs/iac-labs/example-app/.venv
+          key: ${{ runner.os }}-venv
       - name: Test with pytest
         run: |
             poetry run task test
