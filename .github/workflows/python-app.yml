@@ -32,15 +32,53 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install --no-root
-    - name: Lint with flake8
-      run: |
-        poetry run task lint
-    - name: formatter
-      run: |
-        poetry run task formatter
-    - name: security
-      run: |
-        poetry run task security
-    - name: Test with pytest
-      run: |
-        poetry run task test
+
+  lint:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: static-analysis
+    defaults:
+      run:
+        working-directory: ./example-app
+    needs: build
+    steps:
+      - name: Lint with flake8
+        run: |
+            poetry run task lint
+
+  formatter:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: static-analysis
+    defaults:
+      run:
+        working-directory: ./example-app
+    needs: build
+    steps:
+      - name: formatter
+        run: |
+            poetry run task formatter
+
+  security:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: static-analysis
+    defaults:
+      run:
+        working-directory: ./example-app
+    needs: build
+    steps:
+      - name: security
+        run: |
+            poetry run task security
+
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./example-app
+    needs: ['lint', 'formatter', 'security']
+    steps:
+      - name: Test with pytest
+        run: |
+            poetry run task test
